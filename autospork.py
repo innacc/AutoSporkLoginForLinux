@@ -62,7 +62,7 @@ my_date = date.today()
 currentday = calendar.day_name[my_date.weekday()]
 saturday = "Saturday"
 sunday = "Sunday"
-if(currentday == saturday):
+if(currentday == sunday):
     print("there is no school today")
     exit()
 if(currentday == saturday):
@@ -129,31 +129,40 @@ cj = int(input())
 #Joins a class
 print(str(cj))
 #For 7 classes
-if zeroandeight == "No":
+print(str(zeroandeight))
+if zeroandeight == ['No\n']:
     while cj <= 7:  
         try:
-            join_button = driver.find_element_by_tag_name("button")
+            join_button = driver.find_element_by_css_selector(".sign")
         except:
             time.sleep(1)
             pass
         else:
-            join_button.click()
-            print("you have joined a class")
-            playsound(home+"/autosporklogin/joinclass.mp3")
-            cj = cj + 1
+            playsound("joinclass.mp3")
+            print("Type Y to join a class")
+            check = input()
+            if check == 'Y':
+                join_button.click()
+                print("you have joined a class")
+                cj = cj + 1
+                check = 'N'
 
-if zeroandeight == "Yes":
+if zeroandeight == ['Yes']:
     while cj <= 8:  
         try:
-            join_button = driver.find_element_by_tag_name("button")
+            join_button = driver.find_element_by_css_selector(".sign")
         except:
             time.sleep(1)
             pass
         else:
-            join_button.click()
-            print("you have joined a class")
-            playsound(home+"/autosporklogin/joinclass.mp3")
-            cj = cj + 1
+            print("Type Y to join a class")
+            playsound("Thereclass.mp3")
+            check = input()
+            if check == 'Y':
+                join_button.click()
+                print("you have joined a class")
+                cj = cj + 1
+                check = 'N'
 
 #quits the webbrowser
 driver.quit()
