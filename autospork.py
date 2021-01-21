@@ -7,45 +7,65 @@ import datetime
 from datetime import date
 import calendar
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 from playsound import playsound
+import PySimpleGUI as sg
 home = os.path.expanduser("~")
 
-### INPUT YOUR CREDENTIALS HERE ###
-def FirstTimeSetup():
-    #Taking information
-    print("welcome to autosporklogin first time setup")
-    time.sleep(3)
-    print("Make sure firefox is installed")
-    time.sleep(3)
-    print("a donation to the paypal isaac.don7@gmail.com would be nice, but it is not necessary")
-    time.sleep(3)
-    print("I am not resposible if this tool does not work")
-    time.sleep(3)
-    print("if you have less than 7 classes this will not work")
-    print("by running, you agree to the liscence (MIT)")
-    time.sleep(3)
-    print("please enter username")
-    userid = input()
-    print("please enter password")
-    passid = input()
-    print("do you have 8 classes (0 and 8th period with no free periods) (Yes/No (make sure the Y or N are capital))")
-    zeroeight = input()
 
-    ##writing to file
+sg.theme('DarkAmber')
+
+
+### INPUT YOUR CREDENTIALS HERE ###
+
+
+def FirstTimeSetup():
+    
+    
+    layout = [
+             [sg.Text('welcome to autosporklogin first time setup')],
+             [sg.Text('Make sure firefox is installed')],
+             [sg.Text('a donation to the paypal isaac.don7@gmail.com would be nice, but it is not necessary')],
+             [sg.Text('I am not resposible for what you do with this tool')],
+             [sg.Text('if you have less than 7 classes this will not work')],
+             [sg.Text("by running, you agree to the liscence (MIT)")],
+             [sg.Text('Please enter your spork credentials')], 
+             [sg.Text('Username', size =(15, 1)), sg.InputText()], 
+             [sg.Text('Password', size =(15, 1)), sg.InputText()],  
+             [sg.Checkbox('Do you have a zero and eigth period', default=False, key="-IN-")], 
+             [sg.Button('Confirm'), sg.Button('Cancel')] ]
+    
+    ###Setting Window
+    window = sg.Window('Initial Setup', layout, size=(600,400))
+
+    ###Showing the Application, also GUI functions can be placed here.
+
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event=="Cancel":
+            exit()
+            break
+        elif values["-IN-"] == True:
+            zeroeight = "Yes"
+            break
+        elif values["-IN-"] == False:
+            zeroeight = "No"
+            break
+        elif event == 'Confirm':
+            break
+
+    window.close()
+    userid = values[0]
+    passid = values[1]
     f = open(home+"/autosporklogin/Login.txt", "a")
     f.write("%s"% userid+"\n")
     f.write("%s"% passid+"\n")
     f.write("%s"% zeroeight)
     f.close()
+    
     return
 
 def NotFirstTimeSetup():
-    print("              _                             _    ")
-    print("   __ _ _   _| |_ ___  ___ _ __   ___  _ __| | __")
-    print("  / _` | | | | __/ _ \/ __| '_ \ / _ \| '__| |/ /")
-    print(" | (_| | |_| | || (_) \__ \ |_) | (_) | |  |   < ")
-    print("  \__,_|\__,_|\__\___/|___/ .__/ \___/|_|  |_|\_\ ")
-    print("                            |_|                    ")
     f = open(home+"/autosporklogin/Login.txt", "r")
     usernameid = f.readlines(1)
     passwordid = f.readlines(2)
@@ -105,30 +125,128 @@ def schedclick():
         exit()
 
     return
-def classjoiner(x, cj):
-    while cj <= x:  
-        try:
-            join_button = driver.find_element_by_css_selector(".sign")
-        except:
-            time.sleep(1)
-            pass
-        else:
-            print("Type Y to join a class")
-            playsound("Thereclass.mp3")
-            check = input()
-            if check == 'Y':
-                join_button.click()
-                print("you have joined a class")
-                cj = cj + 1
-                check = 'N'
-    return
+def joinbutton(jb):
+    layout = [
+             [sg.Text('A class is ready to join')], 
+             [sg.Button('Join')],
+             [sg.Button('Exit')] ]
     
+    ###Setting Window
+    window = sg.Window('A class is ready to join' , layout, size=(600,400))
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event=="Exit":
+            exit()
+            break
+        elif event == 'Join':
+            jb.click()
+            break
+
+    window.close()
+
+    return
+def classjoiner(x, cj):
+    layout = [
+             [sg.Text('Attempting to join class number ' + str(cj))], 
+             [sg.Button('Exit')] ]
+    
+    ###Setting Window
+    window = sg.Window('Attempting to join class' , layout, size=(600,400))
+
+    ###Showing the Application, also GUI functions can be placed here.
+
+    while True:
+        while cj <= x:  
+            try:
+                join_button = driver.find_element_by_css_selector(".sign")
+            except:
+                event, values = window.read()
+                if event == sg.WIN_CLOSED or event=="Exit":
+                    exit()
+                    break
+                time.sleep(1)
+                pass
+            else:
+                playsound("joinclass.mp3")
+                joinbutton(join_button)
+                cj = cj + 1
+                   
+
+    window.close()
+ 
+    return
+
+def Setting():
+    layout = [
+             [sg.Text('Settings')], 
+             [sg.Checkbox('Headless (does not open up firefox)', default=False, key="-IN-")], 
+             [sg.Button('Next'), sg.Button('Exit')] ]
+    
+    ###Setting Window
+    window = sg.Window('Initial Setup', layout, size=(600,400))
+
+    ###Showing the Application, also GUI functions can be placed here.
+
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event=="Exit":
+            exit()
+            break
+        elif values["-IN-"] == True:
+            Headless = "Yes"
+            break
+        elif values["-IN-"] == False:
+            Headless = "No"
+            break
+        elif event == 'Next':
+            break
+
+    window.close()
+ 
+    
+    return Headless
+def midday():
+    layout = [
+             [sg.Text('Settings')], 
+             [sg.Text('What class do you have (1 for first class)', size =(35, 1)), sg.InputText()],
+             [sg.Button('Run'), sg.Button('Exit')] ]
+    
+    ###Setting Window
+    window = sg.Window('midday', layout, size=(600,400))
+
+    ###Showing the Application, also GUI functions can be placed here.
+
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event=="Exit":
+            exit()
+            break
+        elif event == 'Run':
+            break
+
+    window.close()
+    classnum = values[0]
+
+    
+    return int(classnum)
+
+
+##actual program
 if(os.stat(home+"/autosporklogin/Login.txt").st_size == 0):
     FirstTimeSetup();
+    
+Head = Setting();
+
 
 usernameid, passwordid, zeroandeight = NotFirstTimeSetup();
 
-driver = webdriver.Firefox()
+if Head == "Yes":
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options)
+else:
+    driver = webdriver.Firefox()
+    
 
 # Opens spork.school
 driver.get("https://spork.school/")
@@ -145,8 +263,9 @@ time.sleep(2)
 DateClick();
 
 #asks if it is in the middle of the day
-print("what is your next class (1 being your first class and 8 being your eighth class (if you have one))(This is not period)")
-cj = int(input())
+
+cj = midday()
+
 
 #For 7 classes
 
@@ -155,7 +274,7 @@ if zeroandeight == ['No']:
 else:
     cls = 8
 
-classjoiner(cls, cj)
+classjoiner(cls , cj);
 
 #quits the webbrowser
 driver.quit()
